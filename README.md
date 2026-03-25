@@ -16,10 +16,6 @@ Small static web app to crop and resize images for the Xteink X4 e-reader, with 
 | `style.css`  | Layout and UI                         |
 | `app.js`     | Canvas compositing and BMP encoder    |
 
-## Publish online (GitHub + Cloudflare Pages)
-
-Step-by-step settings (including Cloudflare build configuration) are in **[DEPLOY.md](./DEPLOY.md)**.
-
 ## License
 
 MIT — see [LICENSE](./LICENSE).
