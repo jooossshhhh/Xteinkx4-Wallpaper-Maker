@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Xteink X4 wallpaper maker</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="panel">
+        <h1>Xteink X4 wallpapers</h1>
+        <p class="sub" id="intro-blurb">
+          Exports <strong id="intro-dims">480×800</strong> 24-bit BMP. Everything
+          runs in your browser.
+        </p>
+
+        <div
+          class="dropzone"
+          id="dropzone"
+          tabindex="0"
+          role="button"
+          aria-label="Upload images"
+        >
+          <p>Drop images here or click to browse</p>
+          <p class="hint">JPG, WebP, etc. — nothing is uploaded to a server</p>
+          <label class="btn-secondary" for="file-input">Choose files</label>
+          <input id="file-input" type="file" accept="image/*" multiple />
+        </div>
+
+        <div class="field">
+          <label for="orientation">Device frame</label>
+          <select id="orientation">
+            <option value="portrait" selected>Portrait — 480 × 800</option>
+            <option value="landscape">Landscape — 800 × 480</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="fit-mode">Fit</label>
+          <select id="fit-mode">
+            <option value="cover" selected>Cover (fill, crop edges)</option>
+            <option value="contain">Contain (letterbox)</option>
+            <option value="stretch">Stretch to exact size</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="scale">Scale <span id="scale-val">100%</span></label>
+          <input id="scale" type="range" min="50" max="200" value="100" />
+        </div>
+
+        <div class="row-2">
+          <div class="field">
+            <label for="offset-x">Pan X <span id="offset-x-val">0</span></label>
+            <input id="offset-x" type="range" min="-100" max="100" value="0" />
+          </div>
+          <div class="field">
+            <label for="offset-y">Pan Y <span id="offset-y-val">0</span></label>
+            <input id="offset-y" type="range" min="-100" max="100" value="0" />
+          </div>
+        </div>
+        <p id="pan-hint" class="field-hint" hidden>
+          <strong>Pan</strong> moves the picture when it does not match the
+          frame (extra crop in <strong>Cover</strong>, margins in
+          <strong>Contain</strong>, or after zooming). Use the sliders or drag
+          the preview. <strong>Stretch</strong> fills the frame—no pan.
+        </p>
+
+        <label class="check">
+          <input type="checkbox" id="eink" checked />
+          Grayscale preview (E Ink look)
+        </label>
+        <label class="check check--spaced">
+          <input type="checkbox" id="dither" />
+          1-bit dither (high contrast)
+        </label>
+
+        <div class="actions">
+          <button type="button" class="ghost" id="reset-transform">
+            Reset pan &amp; scale
+          </button>
+          <button type="button" class="primary" id="download-bmp" disabled>
+            Download BMP
+          </button>
+        </div>
+
+        <div class="queue-toolbar">
+          <p class="sub sub--queue-heading">Staging queue</p>
+          <div class="queue-actions">
+            <button type="button" class="ghost ghost--sm" id="duplicate-active" disabled>
+              Duplicate
+            </button>
+            <button type="button" class="ghost ghost--sm" id="clear-queue" disabled>
+              Clear all
+            </button>
+          </div>
+        </div>
+        <div class="thumb-list" id="thumb-list"></div>
+      </aside>
+
+      <main class="stage-wrap">
+        <div class="device" aria-label="Device preview frame">
+          <div class="device-notch" aria-hidden="true"></div>
+          <div class="device-bezel" id="preview-bezel">
+            <img
+              id="preview-img"
+              class="device-screen"
+              draggable="false"
+              alt="Wallpaper preview at device resolution"
+              width="480"
+              height="800"
+              hidden
+            />
+          </div>
+        </div>
+        <p class="spec-pill" id="spec-pill">
+          Preview 480 × 800 · No data sent to a server
+        </p>
+        <p id="empty-stage" class="empty-stage">
+          Add an image to see it in the frame.
+        </p>
+      </main>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
+
