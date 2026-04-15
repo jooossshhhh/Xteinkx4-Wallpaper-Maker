@@ -101,6 +101,8 @@ button.ghost--sm {
 }
 
 .dropzone {
+  display: block;
+  position: relative;
   border: 2px dashed var(--border);
   border-radius: 10px;
   padding: 1.75rem 1rem;
@@ -128,11 +130,22 @@ button.ghost--sm {
   margin-top: 0.35rem;
 }
 
-input[type="file"] {
-  display: none;
+/* display:none breaks file activation from <label> on some mobile browsers (esp. iOS Safari). */
+.file-input--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+  opacity: 0;
 }
 
-label.btn-secondary {
+.btn-secondary {
   display: inline-block;
   margin-top: 0.75rem;
   padding: 0.4rem 0.9rem;
@@ -143,8 +156,15 @@ label.btn-secondary {
   cursor: pointer;
 }
 
-label.btn-secondary:hover {
+.btn-secondary:hover {
   background: #3d4d66;
+}
+
+.upload-error {
+  font-size: 0.8rem;
+  color: #f0a8a8;
+  margin: 0 0 0.75rem;
+  line-height: 1.35;
 }
 
 .field {

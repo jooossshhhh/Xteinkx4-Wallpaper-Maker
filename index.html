@@ -15,18 +15,26 @@
           runs in your browser.
         </p>
 
-        <div
+        <p id="upload-error" class="upload-error" hidden></p>
+
+        <label
           class="dropzone"
           id="dropzone"
           tabindex="0"
           role="button"
           aria-label="Upload images"
         >
-          <p>Drop images here or click to browse</p>
+          <p>Drop images here or tap to browse</p>
           <p class="hint">JPG, WebP, etc. — nothing is uploaded to a server</p>
-          <label class="btn-secondary" for="file-input">Choose files</label>
-          <input id="file-input" type="file" accept="image/*" multiple />
-        </div>
+          <span class="btn-secondary">Choose files</span>
+          <input
+            id="file-input"
+            class="file-input--hidden"
+            type="file"
+            accept="image/*"
+            multiple
+          />
+        </label>
 
         <div class="field">
           <label for="orientation">Device frame</label>

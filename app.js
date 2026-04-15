@@ -7,6 +7,7 @@
   const $ = {
     dropzone: document.getElementById("dropzone"),
     fileInput: document.getElementById("file-input"),
+    uploadError: document.getElementById("upload-error"),
     orientation: document.getElementById("orientation"),
     introDims: document.getElementById("intro-dims"),
     fitMode: document.getElementById("fit-mode"),
@@ -33,7 +34,19 @@
   const outCanvas = document.createElement("canvas");
   outCanvas.width = 480;
   outCanvas.height = 800;
-  const outCtx = outCanvas.getContext("2d", { willReadFrequently: true });
+  /** @type {CanvasRenderingContext2D | null} */
+  let outCtx = null;
+  try {
+    outCtx = outCanvas.getContext("2d", { willReadFrequently: true });
+  } catch {
+    /* ignore */
+  }
+  if (!outCtx) {
+    outCtx = outCanvas.getContext("2d");
+  }
+  if (!outCtx) {
+    throw new Error("Canvas 2D context is not available");
+  }
 
   /** @type {{ id: string, name: string, img: HTMLImageElement }[]} */
   let items = [];
@@ -67,6 +80,18 @@
 
   function isLandscape() {
     return $.orientation?.value === "landscape";
+  }
+
+  function setUploadError(message) {
+    const el = $.uploadError;
+    if (!el) return;
+    if (message) {
+      el.textContent = message;
+      el.hidden = false;
+    } else {
+      el.textContent = "";
+      el.hidden = true;
+    }
   }
 
   function syncCanvasDimensions() {
@@ -206,8 +231,12 @@
   }
 
   async function addFiles(fileList) {
+    setUploadError("");
     const files = [...fileList].filter(shouldTryDecodeAsImage);
-    if (!files.length) return;
+    if (!files.length) {
+      setUploadError("No supported image files selected.");
+      return;
+    }
 
     const settled = await Promise.allSettled(
       files.map(async (file) => {
@@ -218,11 +247,30 @@
 
     /** @type {{ id: string, name: string, img: HTMLImageElement }[]} */
     const newItems = [];
+    /** @type {string[]} */
+    const loadErrors = [];
     for (const r of settled) {
       if (r.status === "fulfilled") newItems.push(r.value);
-      else console.warn("Skipped a file:", r.reason);
+      else {
+        const msg =
+          r.reason instanceof Error ? r.reason.message : String(r.reason);
+        loadErrors.push(msg);
+        console.warn("Skipped a file:", r.reason);
+      }
     }
-    if (!newItems.length) return;
+    if (!newItems.length) {
+      setUploadError(
+        loadErrors[0]
+          ? `Could not load image: ${loadErrors[0]}`
+          : "Could not load image."
+      );
+      return;
+    }
+    if (loadErrors.length) {
+      setUploadError(
+        `Loaded ${newItems.length} file(s). ${loadErrors.length} file(s) could not be opened.`
+      );
+    }
 
     items = items.concat(newItems);
     if (!activeId) activeId = newItems[0].id;
@@ -245,6 +293,7 @@
     revokePreviewObjectUrl();
     items = [];
     activeId = null;
+    setUploadError("");
     renderThumbs();
     composite();
   }
@@ -515,7 +564,7 @@
     return safe || "wallpaper";
   }
 
-  $.dropzone.addEventListener("click", () => $.fileInput.click());
+  /* Dropzone is a <label>; avoid synthetic fileInput.click() here — iOS Safari often ignores it. */
   $.dropzone.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
